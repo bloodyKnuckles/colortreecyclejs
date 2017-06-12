@@ -15,10 +15,8 @@ function intent(domSource) {
     .mapTo({type: 'removeSelf'})
 
   const viewInfo$ = domSource.select('.view').events('click')
-    .map((ev) => {
-      ev.preventDefault()
-      return {type: 'viewInfo'}
-    })
+    .debug(ev => ev.preventDefault())
+    .mapTo({type: 'viewInfo'})
 
   return xs.merge(addChild$, removeSelf$, viewInfo$)
 }
@@ -62,7 +60,7 @@ function model(action$) {
     .mapTo(function viewInfoReducer(state) {
       return {
         ...state,
-        viewcolor: state.color
+        viewcolor: 'red'
       }
     })
 
@@ -94,7 +92,11 @@ function view(state$, childrenVDOM$) {
       const color = state.color
       const nochildren = !!(0 === state.children.length)
       return span([
-        span([a({attrs: {href: 'abc', 'class': 'view'}}, color + (!nochildren? ' > ': ''))]), 
+        span([a({
+            attrs: {href: 'abc', 'class': 'view'}
+          },
+          color + (!nochildren? ' > ': '')
+        )]), 
         nochildren && div({style: style(color)}, [
           button('.add', ['Add Folder']),
           state.removable && button('.remove', ['Remove me']),

@@ -8,9 +8,10 @@ function getLastChildColor (tree) {
 function view(state$) {
   return state$
     .map((state) => {
+//console.log(state)
       var cc = getLastChildColor(state)
       localStorage.setItem('lastcolor', localStorage.getItem('lastcolor') + ',' + cc)
-      return h1('color: ' + cc)
+      return h1('color: ' + cc + ' ' + state.viewcolor)
     })
 }
 

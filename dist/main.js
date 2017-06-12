@@ -11023,10 +11023,9 @@ function intent(domSource) {
 
   var removeSelf$ = domSource.select('.remove').events('click').mapTo({ type: 'removeSelf' });
 
-  var viewInfo$ = domSource.select('.view').events('click').map(function (ev) {
-    ev.preventDefault();
-    return { type: 'viewInfo' };
-  });
+  var viewInfo$ = domSource.select('.view').events('click').debug(function (ev) {
+    return ev.preventDefault();
+  }).mapTo({ type: 'viewInfo' });
 
   return _xstream2.default.merge(addChild$, removeSelf$, viewInfo$);
 }
@@ -11071,7 +11070,7 @@ function model(action$) {
     return type === 'viewInfo';
   }).mapTo(function viewInfoReducer(state) {
     return _extends({}, state, {
-      viewcolor: state.color
+      viewcolor: 'red'
     });
   });
 
@@ -11105,7 +11104,9 @@ function view(state$, childrenVDOM$) {
     //const color = idToColor(state.id)
     var color = state.color;
     var nochildren = !!(0 === state.children.length);
-    return (0, _dom.span)([(0, _dom.span)([(0, _dom.a)({ attrs: { href: 'abc', 'class': 'view' } }, color + (!nochildren ? ' > ' : ''))]), nochildren && (0, _dom.div)({ style: style(color) }, [(0, _dom.button)('.add', ['Add Folder']), state.removable && (0, _dom.button)('.remove', ['Remove me'])]), !nochildren && (0, _dom.span)({}, childrenVDOM)]);
+    return (0, _dom.span)([(0, _dom.span)([(0, _dom.a)({
+      attrs: { href: 'abc', 'class': 'view' }
+    }, color + (!nochildren ? ' > ' : ''))]), nochildren && (0, _dom.div)({ style: style(color) }, [(0, _dom.button)('.add', ['Add Folder']), state.removable && (0, _dom.button)('.remove', ['Remove me'])]), !nochildren && (0, _dom.span)({}, childrenVDOM)]);
   });
 }
 
@@ -11179,14 +11180,19 @@ function FolderApp(sources) {
     } else {
       return prevState;
     }
-  });
+  }
 
+  //const c1Lens = {
+  //  get: state => ({viewcolor: state.viewcolor}),
+  //  set: (state, childState) => ({...state, viewcolor: childState.viewcolor})
+  //};
+  );console.log('folderapp');
   var c1Lens = {
     get: function get(state) {
-      return state;
+      console.log(state);return state;
     },
     set: function set(state, childState) {
-      return childState;
+      console.log(state);return childState;
     }
   };
 
@@ -11235,9 +11241,10 @@ function getLastChildColor(tree) {
 
 function view(state$) {
   return state$.map(function (state) {
+    //console.log(state)
     var cc = getLastChildColor(state);
     localStorage.setItem('lastcolor', localStorage.getItem('lastcolor') + ',' + cc);
-    return (0, _dom.h1)('color: ' + cc);
+    return (0, _dom.h1)('color: ' + cc + ' ' + state.viewcolor);
   });
 }
 
